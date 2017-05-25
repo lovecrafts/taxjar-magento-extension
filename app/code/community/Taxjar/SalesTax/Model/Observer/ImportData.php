@@ -46,7 +46,7 @@ class Taxjar_SalesTax_Model_Observer_ImportData
      */
     private function _getConfigJson()
     {
-        $configJson = $this->_client->getResource($this->_apiKey, 'config');
+        $configJson = $this->_client->getResource('config');
         return $configJson['configuration'];
     }
 

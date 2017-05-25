@@ -38,7 +38,7 @@ class Taxjar_SalesTax_Model_Observer_ImportCategories
      */
     private function _getCategoryJson()
     {
-        $categoryJson = $this->_client->getResource($this->_apiKey, 'categories');
+        $categoryJson = $this->_client->getResource('categories');
         return $categoryJson['categories'];
     }
 

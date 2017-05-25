@@ -23,6 +23,7 @@
 class Taxjar_SalesTax_Model_Client
 {
     protected $_version = 'v2';
+    protected $_apiKey;
     protected $_storeZip;
     protected $_storeRegionCode;
     protected $_storeRegionId;
@@ -33,6 +34,8 @@ class Taxjar_SalesTax_Model_Client
      */
     public function __construct()
     {
+        $this->_apiKey = trim(Mage::getStoreConfig('tax/taxjar/apikey'));
+
         $websiteForShippingOrigin = Mage::getStoreConfig('tax/taxjar/shipping_origin_website');
         if ($websiteForShippingOrigin) {
             $this->_storeZip = trim(
@@ -79,29 +82,27 @@ class Taxjar_SalesTax_Model_Client
     /**
      * Perform a GET request
      *
-     * @param string $apiKey
      * @param string $url
      * @param array $errors
      * @return array
      */
-    public function getResource($apiKey, $resource, $errors = array())
+    public function getResource($resource, $errors = array())
     {
-        $client = $this->_getClient($apiKey, $this->_getApiUrl($resource));
+        $client = $this->_getClient($this->_getApiUrl($resource));
         return $this->_getRequest($client, $errors);
     }
 
     /**
      * Perform a POST request
      *
-     * @param string $apiKey
      * @param string $resource
      * @param array $data
      * @param array $errors
      * @return array
      */
-    public function postResource($apiKey, $resource, $data, $errors = array())
+    public function postResource($resource, $data, $errors = array())
     {
-        $client = $this->_getClient($apiKey, $this->_getApiUrl($resource), Zend_Http_Client::POST);
+        $client = $this->_getClient($this->_getApiUrl($resource), Zend_Http_Client::POST);
         $client->setRawData(json_encode($data), 'application/json');
         return $this->_getRequest($client, $errors);
     }
@@ -109,16 +110,15 @@ class Taxjar_SalesTax_Model_Client
     /**
      * Perform a PUT request
      *
-     * @param string $apiKey
      * @param string $resource
      * @param array $data
      * @param array $errors
      * @return array
      */
-    public function putResource($apiKey, $resource, $resourceId, $data, $errors = array())
+    public function putResource($resource, $resourceId, $data, $errors = array())
     {
         $resourceUrl = $this->_getApiUrl($resource) . '/' . $resourceId;
-        $client = $this->_getClient($apiKey, $resourceUrl, Zend_Http_Client::PUT);
+        $client = $this->_getClient($resourceUrl, Zend_Http_Client::PUT);
         $client->setRawData(json_encode($data), 'application/json');
         return $this->_getRequest($client, $errors);
     }
@@ -126,30 +126,28 @@ class Taxjar_SalesTax_Model_Client
     /**
      * Perform a DELETE request
      *
-     * @param string $apiKey
      * @param string $resource
      * @param array $errors
      * @return array
      */
-    public function deleteResource($apiKey, $resource, $resourceId, $errors = array())
+    public function deleteResource($resource, $resourceId, $errors = array())
     {
         $resourceUrl = $this->_getApiUrl($resource) . '/' . $resourceId;
-        $client = $this->_getClient($apiKey, $resourceUrl, Zend_Http_Client::DELETE);
+        $client = $this->_getClient($resourceUrl, Zend_Http_Client::DELETE);
         return $this->_getRequest($client, $errors);
     }
 
     /**
      * Get HTTP Client
      *
-     * @param string $apiKey
      * @param string $url
      * @return Zend_Http_Client $response
      */
-    private function _getClient($apiKey, $url, $method = Zend_Http_Client::GET)
+    private function _getClient($url, $method = Zend_Http_Client::GET)
     {
         $client = new Zend_Http_Client($url, array('timeout' => 30));
         $client->setMethod($method);
-        $client->setHeaders('Authorization', 'Bearer ' . $apiKey);
+        $client->setHeaders('Authorization', 'Bearer ' . $this->_apiKey);
 
         return $client;
     }

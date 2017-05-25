@@ -221,7 +221,7 @@ class Taxjar_SalesTax_Model_Observer_ImportRates
      */
     private function _getRatesJson()
     {
-        $ratesJson = $this->_client->getResource($this->_apiKey, 'rates', array(
+        $ratesJson = $this->_client->getResource('rates', array(
             '403' => Mage::helper('taxjar')->__('Your last backup rate sync from TaxJar was too recent. Please wait at least 5 minutes and try again.')
         ));
         return $ratesJson;
