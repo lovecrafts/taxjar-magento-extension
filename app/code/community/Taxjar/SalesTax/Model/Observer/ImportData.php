@@ -58,7 +58,7 @@ class Taxjar_SalesTax_Model_Observer_ImportData
      */
     private function _setConfiguration()
     {
-        $configuration = Mage::getModel('taxjar/configuration');
+        $configuration = Mage::getSingleton('taxjar/configuration');
         $configJson = $this->_getConfigJson();
 
         $configuration->setTaxBasis($configJson);

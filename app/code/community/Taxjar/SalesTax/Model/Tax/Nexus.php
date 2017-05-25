@@ -29,7 +29,7 @@ class Taxjar_SalesTax_Model_Tax_Nexus extends Mage_Core_Model_Abstract
      */
     public function sync()
     {
-        $client = Mage::getModel('taxjar/client');
+        $client = Mage::getSingleton('taxjar/client');
         $apiKey = trim(Mage::getStoreConfig('tax/taxjar/apikey'));
 
         $data = array(
@@ -63,7 +63,7 @@ class Taxjar_SalesTax_Model_Tax_Nexus extends Mage_Core_Model_Abstract
      */
     public function syncDelete()
     {
-        $client = Mage::getModel('taxjar/client');
+        $client = Mage::getSingleton('taxjar/client');
         $apiKey = trim(Mage::getStoreConfig('tax/taxjar/apikey'));
 
         $responseErrors = array(
@@ -83,7 +83,7 @@ class Taxjar_SalesTax_Model_Tax_Nexus extends Mage_Core_Model_Abstract
      */
     public function syncCollection()
     {
-        $client = Mage::getModel('taxjar/client');
+        $client = Mage::getSingleton('taxjar/client');
         $apiKey = trim(Mage::getStoreConfig('tax/taxjar/apikey'));
         $nexusJson = $client->getResource('nexus');
 
