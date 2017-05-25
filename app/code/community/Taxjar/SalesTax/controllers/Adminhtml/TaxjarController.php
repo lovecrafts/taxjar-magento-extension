@@ -35,9 +35,6 @@ class Taxjar_SalesTax_Adminhtml_TaxjarController extends Mage_Adminhtml_Controll
             Mage::getConfig()->saveConfig('tax/taxjar/connected', 1);
             Mage::getConfig()->reinit();
 
-            $configuration = Mage::getModel('taxjar/configuration');
-            $configuration->setApiSettings($apiKey);
-
             Mage::getSingleton('core/session')->addSuccess('TaxJar account for ' . $apiEmail . ' is now connected.');
             Mage::dispatchEvent('taxjar_salestax_import_categories');
         } else {
