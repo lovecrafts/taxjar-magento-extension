@@ -201,7 +201,7 @@ class Taxjar_SalesTax_Model_Observer_ImportRates
                 $connection->delete($taxCalculationTable, ['tax_calculation_id IN (?)' => $ids]);
             } catch (Exception $e) {
                 Mage::getSingleton('core/session')
-                    ->addError('There was an error deleting from Magento model tax/calculation');
+                    ->addError(Mage::helper('taxjar')->__('There was an error deleting from Magento model tax/calculation'));
             }
         }
 
@@ -209,7 +209,7 @@ class Taxjar_SalesTax_Model_Observer_ImportRates
             $connection->delete($rates->getMainTable(), ['tax_calculation_rate_id IN (?)' => $rateIds]);
         } catch (Exception $e) {
             Mage::getSingleton('core/session')
-                ->addError('There was an error deleting from Magento model tax/calculation_rate');
+                ->addError(Mage::helper('taxjar')->__('There was an error deleting from Magento model tax/calculation_rate'));
         }
     }
 

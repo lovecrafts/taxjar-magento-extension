@@ -38,7 +38,7 @@ class Taxjar_SalesTax_Adminhtml_TaxjarController extends Mage_Adminhtml_Controll
             Mage::getSingleton('core/session')->addSuccess('TaxJar account for ' . $apiEmail . ' is now connected.');
             Mage::dispatchEvent('taxjar_salestax_import_categories');
         } else {
-            Mage::getSingleton('core/session')->addError('Could not connect your TaxJar account. Please make sure you have a valid API token and try again.');
+            Mage::getSingleton('core/session')->addError(Mage::helper('taxjar')->__('Could not connect your TaxJar account. Please make sure you have a valid API token and try again.'));
         }
 
         $this->_redirect('adminhtml/system_config/edit/section/tax');
