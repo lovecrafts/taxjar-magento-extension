@@ -71,6 +71,24 @@
             </salestax_setup>
         </resources>
         <events>
+            <sales_order_save_after>
+                <observers>
+                    <taxjar>
+                        <type>singleton</type>
+                        <class>taxjar/observer_syncTransaction</class>
+                        <method>execute</method>
+                    </taxjar>
+                </observers>
+            </sales_order_save_after>
+            <taxjar_salestax_backfill_transactions>
+                <observers>
+                    <taxjar>
+                        <type>singleton</type>
+                        <class>taxjar/observer_backfillTransactions</class>
+                        <method>execute</method>
+                    </taxjar>
+                </observers>
+            </taxjar_salestax_backfill_transactions>
             <taxjar_salestax_import_categories>
                 <observers>
                     <taxjar>
