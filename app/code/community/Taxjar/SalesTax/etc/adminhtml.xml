@@ -27,6 +27,11 @@
                             <action>adminhtml/tax_nexus</action>
                             <sort_order>10</sort_order>
                         </taxjar_salestax_nexus>
+                        <taxjar_salestax_transaction_sync translate="title" module="taxjar">
+                            <title>Sync Transactions</title>
+                            <action>adminhtml/tax_transaction</action>
+                            <sort_order>11</sort_order>
+                        </taxjar_salestax_transaction_sync>
                     </children>
                 </tax>
             </children>

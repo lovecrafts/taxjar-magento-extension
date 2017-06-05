@@ -41,6 +41,20 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </enabled>
+                        <transactions translate="label">
+                            <label>Transaction Sync</label>
+                            <comment>
+                                <model>taxjar/transaction_comment</model>
+                            </comment>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <frontend_model>taxjar/adminhtml_enabled</frontend_model>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><connected>1</connected></depends>
+                        </transactions>
                         <backup translate="label">
                             <label>Backup Rates</label>
                             <comment>
