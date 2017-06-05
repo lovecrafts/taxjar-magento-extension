@@ -33,10 +33,10 @@ class Taxjar_SalesTax_Block_Adminhtml_Tax_Transaction_Backfill_Form extends Mage
             'method'    => 'post'
         ));
 
-        $this->setTitle('Filter');
+        $this->setTitle('Date Range');
 
         $fieldset = $form->addFieldset('base_fieldset', array(
-            'legend'    => 'Filter'
+            'legend'    => 'Date Range'
         ));
 
         $fieldset->addField('from', 'date',
