@@ -220,7 +220,7 @@ class Taxjar_SalesTax_Model_Client
     {
         $errors = $this->_defaultErrors() + $customErrors;
 
-        if ($errors[$statusCode]) {
+        if (isset($errors[$statusCode])) {
             Mage::throwException($errors[$statusCode]);
         } else {
             Mage::throwException($errors['default']);
