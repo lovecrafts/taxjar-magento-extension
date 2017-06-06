@@ -36,9 +36,9 @@ class Taxjar_SalesTax_Model_Import_Comment
         $this->_regionCode = Mage::getModel('directory/region')->load($regionId)->getCode();
 
         if ($isEnabled) {
-            return $this->buildEnabledHtml();
+            return $this->_buildEnabledHtml();
         } else {
-            return $this->buildDisabledHtml();
+            return $this->_buildDisabledHtml();
         }
     }
 
@@ -48,7 +48,7 @@ class Taxjar_SalesTax_Model_Import_Comment
      * @param array $states
      * @return array
      */
-    private function getNumberOfRatesLoaded($states)
+    private function _getNumberOfRatesLoaded($states)
     {
         $rates = Mage::getModel('tax/calculation_rate');
         $stateRatesLoadedCount = 0;
@@ -75,7 +75,7 @@ class Taxjar_SalesTax_Model_Import_Comment
      * @param string $regionCode
      * @return string
      */
-    private function getStateName($regionCode)
+    private function _getStateName($regionCode)
     {
         $regionModel = Mage::getModel('directory/region')->loadByCode($regionCode, 'US');
         return $regionModel->getDefaultName();
@@ -86,16 +86,16 @@ class Taxjar_SalesTax_Model_Import_Comment
      *
      * @return string
      */
-    private function buildEnabledHtml()
+    private function _buildEnabledHtml()
     {
         $states = unserialize(Mage::getStoreConfig('tax/taxjar/states'));
         $htmlString = "<p class='note'><span>Download zip-based rates from TaxJar as a fallback. TaxJar uses your shipping origin and nexus addresses to sync rates each month.</span></p><br/>";
 
         if (!empty($states)) {
-            $htmlString .= "<ul class='messages'>" . $this->buildStatesHtml($states) . "</ul>";
+            $htmlString .= "<ul class='messages'>" . $this->_buildStatesHtml($states) . "</ul>";
         }
 
-        $htmlString .= $this->buildSyncHtml();
+        $htmlString .= $this->_buildSyncHtml();
 
         return $htmlString;
     }
@@ -105,7 +105,7 @@ class Taxjar_SalesTax_Model_Import_Comment
      *
      * @return string
      */
-    private function buildDisabledHtml()
+    private function _buildDisabledHtml()
     {
         $htmlString = "<p class='note'><span>Download zip-based rates from TaxJar as a fallback. TaxJar uses your shipping origin and nexus addresses to sync rates each month.</span></p><br/>";
 
@@ -119,7 +119,7 @@ class Taxjar_SalesTax_Model_Import_Comment
      * @param string $regionCode
      * @return string
      */
-    private function buildStatesHtml($states)
+    private function _buildStatesHtml($states)
     {
         $states[] = $this->_regionCode;
         $statesHtml = '';
@@ -127,10 +127,10 @@ class Taxjar_SalesTax_Model_Import_Comment
 
         sort($states);
 
-        $taxRatesByState = $this->getNumberOfRatesLoaded($states);
+        $taxRatesByState = $this->_getNumberOfRatesLoaded($states);
 
         foreach (array_unique($states) as $state) {
-            if (($stateName = $this->getStateName($state)) && !empty($stateName)) {
+            if (($stateName = $this->_getStateName($state)) && !empty($stateName)) {
                 if ($taxRatesByState['rates_by_state'][$state] == 1 && ($taxRatesByState['rates_loaded'] == $taxRatesByState['total_rates'])) {
                     $totalForState = 'Origin-based rates set';
                     $class = 'success';
@@ -163,7 +163,7 @@ class Taxjar_SalesTax_Model_Import_Comment
      *
      * @return string
      */
-    private function buildSyncHtml()
+    private function _buildSyncHtml()
     {
         $syncUrl = Mage::helper('adminhtml')->getUrl('adminhtml/taxjar/sync_rates');
         $redirectUrl = Mage::helper('adminhtml')->getUrl('adminhtml/system_config/edit/section/tax');

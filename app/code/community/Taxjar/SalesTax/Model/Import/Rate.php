@@ -88,7 +88,7 @@ class Taxjar_SalesTax_Model_Import_Rate
     {
         return Mage::getModel('tax/calculation_rate')
             ->getCollection()
-            ->addFieldToFilter('tax_region_id', $this->getRegionFilter());
+            ->addFieldToFilter('tax_region_id', $this->_getRegionFilter());
     }
 
     /**
@@ -110,7 +110,7 @@ class Taxjar_SalesTax_Model_Import_Rate
      * @param void
      * @return array
      */
-    private function getRegionFilter()
+    private function _getRegionFilter()
     {
         $states = unserialize(Mage::getStoreConfig('tax/taxjar/states'));
         $filter = array();
