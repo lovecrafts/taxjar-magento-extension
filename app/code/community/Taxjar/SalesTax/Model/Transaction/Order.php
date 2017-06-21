@@ -95,7 +95,7 @@ class Taxjar_SalesTax_Model_Transaction_Order extends Taxjar_SalesTax_Model_Tran
                 $this->logger->log('Order #' . $this->request['transaction_id'] . ' updated in TaxJar: ' . json_encode($response), 'api');
             }
 
-            $this->originalOrder->setTjSalestaxSyncDate(gmdate('Y-m-d H:i:s'))->save;
+            $this->originalOrder->setTjSalestaxSyncDate(gmdate('Y-m-d H:i:s'))->save();
         } catch (Exception $e) {
             $this->logger->log('Error: ' . $e->getMessage(), 'error');
             $error = json_decode($e->getMessage());
