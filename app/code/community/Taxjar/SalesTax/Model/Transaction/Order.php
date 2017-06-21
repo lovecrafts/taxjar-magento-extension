@@ -124,12 +124,6 @@ class Taxjar_SalesTax_Model_Transaction_Order extends Taxjar_SalesTax_Model_Tran
     public function isSyncable($order) {
         $states = array('complete', 'closed');
 
-        // TODO: Research this
-        // Probably happens when using observer after saving order to complete / closed
-        // if (!($order instanceof \Magento\Framework\Model\AbstractModel)) {
-        //     return false;
-        // }
-
         if (!in_array($order->getState(), $states)) {
             return false;
         }

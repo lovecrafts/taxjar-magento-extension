@@ -65,7 +65,6 @@ class Taxjar_SalesTax_Model_Observer_BackfillTransactions
         $fromDate->setTime(0, 0, 0);
         $toDate->setTime(23, 59, 59);
 
-        // Backfill also needs to cover USD and US check! Update M2
         $orders = Mage::getModel('sales/order')->getCollection()
             ->addAttributeToFilter('updated_at', array('from' => $fromDate->format('Y-m-d H:i:s'), 'to' => $toDate->format('Y-m-d H:i:s')))
             ->addAttributeToFilter('state', array('in' => $statesToMatch))
@@ -75,15 +74,18 @@ class Taxjar_SalesTax_Model_Observer_BackfillTransactions
 
         foreach ($orders as $order) {
             $orderTransaction = Mage::getModel('taxjar/transaction_order');
-            $orderTransaction->build($order);
-            $orderTransaction->push();
 
-            $creditMemos = $order->getCreditmemosCollection();
+            if ($orderTransaction->isSyncable($order)) {
+                $orderTransaction->build($order);
+                $orderTransaction->push();
 
-            foreach ($creditMemos as $creditMemo) {
-                $refundTransaction = Mage::getModel('taxjar/transaction_refund');
-                $refundTransaction->build($order, $creditMemo);
-                $refundTransaction->push();
+                $creditMemos = $order->getCreditmemosCollection();
+
+                foreach ($creditMemos as $creditMemo) {
+                    $refundTransaction = Mage::getModel('taxjar/transaction_refund');
+                    $refundTransaction->build($order, $creditMemo);
+                    $refundTransaction->push();
+                }
             }
         }
 
