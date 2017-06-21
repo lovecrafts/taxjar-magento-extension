@@ -102,16 +102,17 @@ class Taxjar_SalesTax_Model_Transaction_Refund extends Taxjar_SalesTax_Model_Tra
             $this->originalRefund->setTjSalestaxSyncDate(gmdate('Y-m-d H:i:s'))->save();
         } catch (Exception $e) {
             $this->logger->log('Error: ' . $e->getMessage(), 'error');
-            $error = json_decode($e->getMessage());
+
+            $errorStatusCode = array_search($e->getMessage(), $this->transactionErrors());
 
             // Retry push for not found records using POST
-            if (!$forceMethod && $method == 'PUT' && $error && $error->status == 404) {
+            if (!$forceMethod && $method == 'PUT' && $errorStatusCode == 404) {
                 $this->logger->log('Attempting to create refund / credit memo #' . $this->request['transaction_id'], 'retry');
                 return $this->push('POST');
             }
 
             // Retry push for existing records using PUT
-            if (!$forceMethod && $method == 'POST' && $error && $error->status == 422) {
+            if (!$forceMethod && $method == 'POST' && $errorStatusCode == 422) {
                 $this->logger->log('Attempting to update refund / credit memo #' . $this->request['transaction_id'], 'retry');
                 return $this->push('PUT');
             }
