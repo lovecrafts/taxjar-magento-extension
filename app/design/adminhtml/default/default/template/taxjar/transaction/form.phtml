@@ -37,7 +37,7 @@
         var syncButton = $('transaction-sync-button');
         var syncLog = $('transaction-sync-log');
 
-        syncButton.disable();
+        syncButton.disabled = true;
         syncButton.select('span').last().update('Syncing...');
 
         new Ajax.Request(syncAction, {
@@ -55,16 +55,16 @@
                 varienLoaderHandler.handler.onComplete();
 
                 if (data.result) {
-                    syncLog.select('> pre').first().update('');
+                    syncLog.select('pre').first().update('');
 
                     data.result.forEach(function(line) {
-                        syncLog.select('> pre').first().insert(line);
+                        syncLog.select('pre').first().insert(line);
                     });
                 } else {
-                    syncLog.select('> pre').first().update('Error: ' + data.error_message);
+                    syncLog.select('pre').first().update('Error: ' + data.error_message);
                 }
 
-                syncButton.enable();
+                syncButton.disabled = false;
                 syncButton.select('span').last().update('Sync to TaxJar');
             }
         });
