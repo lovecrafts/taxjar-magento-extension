@@ -19,7 +19,7 @@
 <config>
     <modules>
         <Taxjar_SalesTax>
-            <version>2.3.7</version>
+            <version>2.4.0</version>
         </Taxjar_SalesTax>
     </modules>
     <global>
