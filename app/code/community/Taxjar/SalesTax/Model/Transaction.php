@@ -94,11 +94,12 @@ class Taxjar_SalesTax_Model_Transaction
     /**
      * Build line items for SmartCalcs request
      *
+     * @param $order
      * @param array $items
      * @param string $type
      * @return array
      */
-    protected function buildLineItems($items, $type = 'order') {
+    protected function buildLineItems($order, $items, $type = 'order') {
         $lineItems = array();
         $parentDiscounts = $this->getParentDiscounts($items);
 
@@ -131,6 +132,15 @@ class Taxjar_SalesTax_Model_Transaction
             }
 
             $lineItems['line_items'][] = $lineItem;
+        }
+
+        if ($order->getShippingDiscountAmount() > 0) {
+            $shippingDiscount = (float) $order->getShippingDiscountAmount();
+
+            $lineItems['line_items'][] = array(
+                'description' => 'Shipping Discount',
+                'discount' => $shippingDiscount
+            );
         }
 
         return $lineItems;

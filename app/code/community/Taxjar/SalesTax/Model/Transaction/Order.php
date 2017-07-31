@@ -52,7 +52,7 @@ class Taxjar_SalesTax_Model_Transaction_Order extends Taxjar_SalesTax_Model_Tran
             $newOrder,
             $this->buildFromAddress($order->getStoreId()),
             $this->buildToAddress($order),
-            $this->buildLineItems($order->getAllItems())
+            $this->buildLineItems($order, $order->getAllItems())
         );
 
         return $this->request;

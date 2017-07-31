@@ -51,7 +51,7 @@ class Taxjar_SalesTax_Model_Transaction_Refund extends Taxjar_SalesTax_Model_Tra
             $refund,
             $this->buildFromAddress($order->getStoreId()),
             $this->buildToAddress($order),
-            $this->buildLineItems($creditmemo->getAllItems(), 'refund')
+            $this->buildLineItems($order, $creditmemo->getAllItems(), 'refund')
         );
 
         return $this->request;
