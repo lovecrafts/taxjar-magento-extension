@@ -108,6 +108,10 @@ class Taxjar_SalesTax_Model_Transaction
                 continue;
             }
 
+            if (method_exists($item, 'getOrderItem') && $item->getOrderItem()->getParentItemId()) {
+                continue;
+            }
+
             $product = Mage::getModel('catalog/product')->load($item->getProductId());
             $taxClass = Mage::getModel('tax/class')->load($product->getTaxClassId());
             $discount = (float) $item->getDiscountAmount();
