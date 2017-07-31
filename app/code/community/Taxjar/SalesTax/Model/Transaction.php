@@ -121,7 +121,7 @@ class Taxjar_SalesTax_Model_Transaction
             }
 
             $lineItem = array(
-                'id' => $item->getItemId(),
+                'id' => $item->getOrderItemId() ? $item->getOrderItemId() : $item->getItemId(),
                 'quantity' => (int) $item->getQtyOrdered(),
                 'product_identifier' => $item->getSku(),
                 'description' => $item->getName(),
