@@ -101,7 +101,8 @@ class Taxjar_SalesTax_Model_Transaction
      */
     protected function buildLineItems($order, $items, $type = 'order') {
         $lineItems = array();
-        $parentDiscounts = $this->getParentDiscounts($items);
+        $parentDiscounts = $this->getParentAmounts('discount', $items);
+        $parentTaxes = $this->getParentAmounts('tax', $items);
 
         foreach ($items as $item) {
             if ($item->getParentItemId()) {
@@ -112,23 +113,29 @@ class Taxjar_SalesTax_Model_Transaction
                 continue;
             }
 
+            $itemId = $item->getOrderItemId() ? $item->getOrderItemId() : $item->getItemId();
             $product = Mage::getModel('catalog/product')->load($item->getProductId());
             $taxClass = Mage::getModel('tax/class')->load($product->getTaxClassId());
             $discount = (float) $item->getDiscountAmount();
+            $tax = (float) $item->getTaxAmount();
 
-            if (isset($parentDiscounts[$item->getId()])) {
-                $discount = $parentDiscounts[$item->getId()] ?: $discount;
+            if (isset($parentDiscounts[$itemId])) {
+                $discount = $parentDiscounts[$itemId] ?: $discount;
+            }
+
+            if (isset($parentTaxes[$itemId])) {
+                $tax = $parentTaxes[$itemId] ?: $tax;
             }
 
             $lineItem = array(
-                'id' => $item->getOrderItemId() ? $item->getOrderItemId() : $item->getItemId(),
+                'id' => $itemId,
                 'quantity' => (int) $item->getQtyOrdered(),
                 'product_identifier' => $item->getSku(),
                 'description' => $item->getName(),
                 'product_tax_code' => $taxClass->getTjSalestaxCode(),
                 'unit_price' => (float) $item->getPrice(),
                 'discount' => $discount,
-                'sales_tax' => (float) $item->getTaxAmount()
+                'sales_tax' => $tax
             );
 
             if ($type == 'refund') {
@@ -151,27 +158,45 @@ class Taxjar_SalesTax_Model_Transaction
     }
 
     /**
-     * Get discounts for bundle products
+     * Get parent amounts (discounts, tax, etc) for bundle products
      *
+     * @param string $type
      * @param array $items
      * @return array
      */
-    protected function getParentDiscounts($items) {
-        $parentDiscounts = array();
+    protected function getParentAmounts($type, $items) {
+        $parentAmounts = array();
 
         foreach ($items as $item) {
-            if ($item->getParentItemId()) {
-                $discount = (float) $item->getDiscountAmount();
+            $parentItemId = null;
 
-                if (isset($parentDiscounts[$item->getParentItemId()])) {
-                    $parentDiscounts[$item->getParentItemId()] += $discount;
+            if ($item->getParentItemId()) {
+                $parentItemId = $item->getParentItemId();
+            }
+
+            if (method_exists($item, 'getOrderItem') && $item->getOrderItem()->getParentItemId()) {
+                $parentItemId = $item->getOrderItem()->getParentItemId();
+            }
+
+            if ($parentItemId) {
+                switch ($type) {
+                    case 'discount':
+                        $amount = (float) $item->getDiscountAmount();
+                        break;
+                    case 'tax':
+                        $amount = (float) $item->getTaxAmount();
+                        break;
+                }
+
+                if (isset($parentAmounts[$parentItemId])) {
+                    $parentAmounts[$parentItemId] += $amount;
                 } else {
-                    $parentDiscounts[$item->getParentItemId()] = $discount;
+                    $parentAmounts[$parentItemId] = $amount;
                 }
             }
         }
 
-        return $parentDiscounts;
+        return $parentAmounts;
     }
 
     /**
