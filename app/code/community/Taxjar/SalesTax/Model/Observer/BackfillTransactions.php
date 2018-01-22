@@ -72,6 +72,10 @@ class Taxjar_SalesTax_Model_Observer_BackfillTransactions
 
         $this->logger->log(count($orders) . ' transaction(s) found');
 
+        // This process can take awhile
+        @set_time_limit(0);
+        @ignore_user_abort(true);
+
         foreach ($orders as $order) {
             $orderTransaction = Mage::getModel('taxjar/transaction_order');
 
