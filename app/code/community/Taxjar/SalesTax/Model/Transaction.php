@@ -115,9 +115,9 @@ class Taxjar_SalesTax_Model_Transaction
 
             $itemId = $item->getOrderItemId() ? $item->getOrderItemId() : $item->getItemId();
             $product = Mage::getModel('catalog/product')->load($item->getProductId());
-            $taxClass = Mage::getModel('tax/class')->load($product->getTaxClassId());
             $discount = (float) $item->getDiscountAmount();
             $tax = (float) $item->getTaxAmount();
+            $taxCode = '';
 
             if (isset($parentDiscounts[$itemId])) {
                 $discount = $parentDiscounts[$itemId] ?: $discount;
@@ -127,12 +127,19 @@ class Taxjar_SalesTax_Model_Transaction
                 $tax = $parentTaxes[$itemId] ?: $tax;
             }
 
+            if ($product->getTaxClassId()) {
+                $taxClass = Mage::getModel('tax/class')->load($product->getTaxClassId());
+                $taxCode = $taxClass->getTjSalestaxCode();
+            } else {
+                $taxCode = '99999';
+            }
+
             $lineItem = array(
                 'id' => $itemId,
                 'quantity' => (int) $item->getQtyOrdered(),
                 'product_identifier' => $item->getSku(),
                 'description' => $item->getName(),
-                'product_tax_code' => $taxClass->getTjSalestaxCode(),
+                'product_tax_code' => $taxCode,
                 'unit_price' => (float) $item->getPrice(),
                 'discount' => $discount,
                 'sales_tax' => $tax
