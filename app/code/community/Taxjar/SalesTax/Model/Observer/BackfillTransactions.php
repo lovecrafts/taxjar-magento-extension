@@ -67,7 +67,7 @@ class Taxjar_SalesTax_Model_Observer_BackfillTransactions
         $toDate->setTime(23, 59, 59);
 
         $orders = Mage::getModel('sales/order')->getCollection()
-            ->addAttributeToFilter('updated_at', array('from' => $fromDate->format('Y-m-d H:i:s'), 'to' => $toDate->format('Y-m-d H:i:s')))
+            ->addAttributeToFilter('created_at', array('from' => $fromDate->format('Y-m-d H:i:s'), 'to' => $toDate->format('Y-m-d H:i:s')))
             ->addAttributeToFilter('state', array('in' => $statesToMatch))
             ->load();
 
