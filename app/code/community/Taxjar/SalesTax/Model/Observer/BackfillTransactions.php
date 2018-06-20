@@ -46,7 +46,8 @@ class Taxjar_SalesTax_Model_Observer_BackfillTransactions
         if (!empty($fromDate)) {
             $fromDate = (new DateTime($fromDate));
         } else {
-            $fromDate = (new DateTime())->sub(new DateInterval('P1D'));
+            $fromDate = (new DateTime());
+            $fromDate = $fromDate->sub(new DateInterval('P1D'));
         }
 
         if (!empty($toDate)) {
