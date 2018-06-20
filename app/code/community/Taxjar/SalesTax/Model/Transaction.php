@@ -152,15 +152,6 @@ class Taxjar_SalesTax_Model_Transaction
             $lineItems['line_items'][] = $lineItem;
         }
 
-        if ($order->getShippingDiscountAmount() > 0) {
-            $shippingDiscount = (float) $order->getShippingDiscountAmount();
-
-            $lineItems['line_items'][] = array(
-                'description' => 'Shipping Discount',
-                'discount' => $shippingDiscount
-            );
-        }
-
         return $lineItems;
     }
 
