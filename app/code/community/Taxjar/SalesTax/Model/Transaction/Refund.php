@@ -31,7 +31,7 @@ class Taxjar_SalesTax_Model_Transaction_Refund extends Taxjar_SalesTax_Model_Tra
     public function build($order, $creditmemo) {
         $subtotal = (float) $creditmemo->getSubtotal();
         $shipping = (float) $creditmemo->getShippingAmount();
-        $itemDiscount = (float) $creditmemo->getDiscountAmount();
+        $discount = (float) $creditmemo->getDiscountAmount();
         $shippingDiscount = (float) $creditmemo->getShippingDiscountAmount();
         $salesTax = (float) $creditmemo->getTaxAmount();
 
@@ -43,7 +43,7 @@ class Taxjar_SalesTax_Model_Transaction_Refund extends Taxjar_SalesTax_Model_Tra
             'transaction_id' => $creditmemo->getIncrementId() . '-refund',
             'transaction_reference_id' => $order->getIncrementId(),
             'transaction_date' => $creditmemo->getCreatedAt(),
-            'amount' => $subtotal + $shipping - abs($itemDiscount),
+            'amount' => $subtotal + $shipping - abs($discount),
             'shipping' => $shipping - abs($shippingDiscount),
             'sales_tax' => $salesTax
         );
