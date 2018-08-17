@@ -119,11 +119,11 @@ class Taxjar_SalesTax_Model_Transaction
             $tax = (float) $item->getTaxAmount();
             $taxCode = '';
 
-            if (isset($parentDiscounts[$itemId])) {
+            if (isset($parentDiscounts[$itemId]) && $parentDiscounts[$itemId] > 0) {
                 $discount = $parentDiscounts[$itemId] ?: $discount;
             }
 
-            if (isset($parentTaxes[$itemId])) {
+            if (isset($parentTaxes[$itemId]) && $parentTaxes[$itemId] > 0) {
                 $tax = $parentTaxes[$itemId] ?: $tax;
             }
 
