@@ -125,7 +125,7 @@ EOT;
                     var data = JSON.parse(e.data);
                     if (data.api_token && data.email) {
                         window.connectPopup.postMessage('Data received', '{$authUrl}');
-                        window.location = encodeURI('{$connectUrl}api_key=' + data.api_token + '&api_email=' + data.email);
+                        window.location = encodeURI('{$connectUrl}api_key=' + data.api_token + '&api_email=' + data.email + '&reporting_access=' + data.reporting_access);
                     } else {
                         throw 'Invalid data';
                     }
