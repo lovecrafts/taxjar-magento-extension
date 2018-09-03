@@ -33,8 +33,10 @@ class Taxjar_SalesTax_Model_Observer_ImportRates
 
         if ($isEnabled && $this->_apiKey) {
             $this->_client = Mage::getSingleton('taxjar/client');
-            $this->_storeZip = trim(Mage::getStoreConfig('shipping/origin/postcode'));
-            $this->_storeRegion = Mage::getModel('directory/region')->load(Mage::getStoreConfig('shipping/origin/region_id'));
+            $this->_storeZip = $this->_client->getStoreZip();
+            $this->_storeRegion = Mage::getModel('directory/region')
+                ->load($this->_client->getStoreRegionId());
+
             $this->_customerTaxClasses = explode(',', Mage::getStoreConfig('tax/taxjar/customer_tax_classes'));
             $this->_productTaxClasses = explode(',', Mage::getStoreConfig('tax/taxjar/product_tax_classes'));
             $this->_importRates();
