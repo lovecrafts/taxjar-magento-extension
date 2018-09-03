@@ -167,24 +167,45 @@ class Taxjar_SalesTax_Model_Observer_ImportRates
      */
     private function _purgeRates()
     {
-        $rates = Mage::getModel('taxjar/import_rate')->getExistingRates()->load();
+        /** @var Mage_Tax_Model_Resource_Calculation_Rate_Collection $rates */
+        $rates = Mage::getModel('taxjar/import_rate')->getExistingRates();
+        if (empty($rateIds = $rates->getAllIds())) {
+            return;
+        }
 
-        foreach ($rates as $rate) {
-            $calculations = Mage::getModel('taxjar/import_rate')->getCalculationsByRateId($rate->getId())->load();
+        /** @var Varien_Db_Adapter_Interface */
+        $connection = Mage::getSingleton('core/resource')
+            ->getConnection(Mage_Core_Model_Resource::DEFAULT_WRITE_RESOURCE);
 
-            try {
-                foreach ($calculations as $calculation) {
-                    $calculation->delete();
-                }
-            } catch (Exception $e) {
-                Mage::getSingleton('core/session')->addError('There was an error deleting from Magento model tax/calculation');
+        /** @var Mage_Tax_Model_Resource_Calculation_Collection $taxCalculationCollection */
+        $taxCalculationCollection = Mage::getModel('tax/calculation')->getCollection();
+        $taxCalculationTable = $taxCalculationCollection->getMainTable();
+
+        foreach ($rateIds as $rateId) {
+            /** @var Mage_Tax_Model_Resource_Calculation_Rate_Collection $calculations */
+            $calculations = Mage::getModel('taxjar/import_rate')
+                ->getCalculationsByRateId($rateId)
+                ->addFieldToSelect('tax_calculation_id');
+
+            $ids = $calculations->getAllIds();
+            if (!$ids) {
+                continue;
             }
 
             try {
-                $rate->delete();
+                // delete all tax calculation rules for a given tax calculation id
+                $connection->delete($taxCalculationTable, ['tax_calculation_id IN (?)' => $ids]);
             } catch (Exception $e) {
-                Mage::getSingleton('core/session')->addError('There was an error deleting from Magento model tax/calculation_rate');
+                Mage::getSingleton('core/session')
+                    ->addError('There was an error deleting from Magento model tax/calculation');
             }
+        }
+
+        try {
+            $connection->delete($rates->getMainTable(), ['tax_calculation_rate_id IN (?)' => $rateIds]);
+        } catch (Exception $e) {
+            Mage::getSingleton('core/session')
+                ->addError('There was an error deleting from Magento model tax/calculation_rate');
         }
     }
 
