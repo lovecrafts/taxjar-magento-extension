@@ -17,6 +17,8 @@
 
 class Taxjar_SalesTax_Model_Observer_ImportRates
 {
+    use Taxjar_SalesTax_Trait_ConfigScope;
+
     protected $_apiKey;
     protected $_client;
     protected $_storeZip;
@@ -28,7 +30,7 @@ class Taxjar_SalesTax_Model_Observer_ImportRates
 
     public function execute($ignoredObserverOrCronParameter = null)
     {
-        $isEnabled = Mage::getStoreConfig('tax/taxjar/backup');
+        $isEnabled = $this->getConfigValue('tax/taxjar/backup');
         $this->_apiKey = trim(Mage::getStoreConfig('tax/taxjar/apikey'));
 
         if ($isEnabled && $this->_apiKey) {
