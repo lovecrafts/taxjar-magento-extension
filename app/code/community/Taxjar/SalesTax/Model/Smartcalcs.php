@@ -234,6 +234,14 @@ class Taxjar_SalesTax_Model_Smartcalcs
                 $discount = (float) $item->getDiscountAmount();
                 $taxCode = '';
 
+
+                $confTypeId = Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE;
+                if ($item->getParentItem()
+                    && $item->getParentItem()->getProduct()->getTypeId() === $confTypeId
+                ) {
+                    continue;
+                }
+
                 if ($item->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
                     $parentQuantities[$id] = $quantity;
 
