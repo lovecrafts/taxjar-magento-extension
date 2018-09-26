@@ -173,7 +173,7 @@ class Taxjar_SalesTax_Model_Smartcalcs
      * @param  string $country
      * @return bool
      */
-    private function _hasNexus($regionCode, $country)
+    protected function _hasNexus($regionCode, $country)
     {
         $nexusCollection = Mage::getModel('taxjar/tax_nexus')->getCollection();
 
@@ -200,7 +200,7 @@ class Taxjar_SalesTax_Model_Smartcalcs
      * @param  object $address
      * @return bool
      */
-    private function _isCustomerExempt($address)
+    protected function _isCustomerExempt($address)
     {
         $customerTaxClass = Mage::getModel('tax/class')->load($address->getQuote()->getCustomerTaxClassId());
         $customerTaxCode = $customerTaxClass->getTjSalestaxCode();
@@ -218,7 +218,7 @@ class Taxjar_SalesTax_Model_Smartcalcs
      * @param  array $address
      * @return array
      */
-    private function _getLineItems($address)
+    protected function _getLineItems($address)
     {
         $lineItems = array();
         $items = $address->getAllNonNominalItems();
@@ -287,7 +287,7 @@ class Taxjar_SalesTax_Model_Smartcalcs
      *
      * @return array
      */
-    private function _getNexusAddresses()
+    protected function _getNexusAddresses()
     {
         $nexusAddresses = Mage::getModel('taxjar/tax_nexus')->getCollection();
         $addresses = array();
@@ -312,7 +312,7 @@ class Taxjar_SalesTax_Model_Smartcalcs
      * @param  array $currentOrder
      * @return bool
      */
-    private function _orderChanged($currentOrder)
+    protected function _orderChanged($currentOrder)
     {
         $sessionOrder = json_decode($this->_getSessionData('order'), true);
 
@@ -329,7 +329,7 @@ class Taxjar_SalesTax_Model_Smartcalcs
      * @param  string $key
      * @return object
      */
-    private function _getSessionData($key)
+    protected function _getSessionData($key)
     {
         return Mage::getModel('checkout/session')->getData('taxjar_salestax_' . $key);
     }
@@ -341,7 +341,7 @@ class Taxjar_SalesTax_Model_Smartcalcs
      * @param  string $val
      * @return object
      */
-    private function _setSessionData($key, $val)
+    protected function _setSessionData($key, $val)
     {
         return Mage::getModel('checkout/session')->setData('taxjar_salestax_' . $key, $val);
     }
@@ -352,7 +352,7 @@ class Taxjar_SalesTax_Model_Smartcalcs
      * @param  string $key
      * @return object
      */
-    private function _unsetSessionData($key)
+    protected function _unsetSessionData($key)
     {
         return Mage::getModel('checkout/session')->unsetData('taxjar_salestax_' . $key);
     }
