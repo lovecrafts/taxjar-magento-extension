@@ -19,8 +19,33 @@
  * Config Enabled Dropdown Renderer
  * Handle state based on presence of API token
  */
-class Taxjar_SalesTax_Block_Adminhtml_Enabled extends Mage_Adminhtml_Block_System_Config_Form_Field
+class Taxjar_SalesTax_Block_Adminhtml_Enabled extends Taxjar_SalesTax_Block_Adminhtml_Field
 {
+    const CACHE_KEY = 'taxjar_salestax_config_enabled';
+    const CACHE_TAG = ['TAXJAR_SALESTAX_ENABLED'];
+
+    /**
+     * @return string
+     */
+    public function getFieldCacheKey()
+    {
+        return self::CACHE_KEY;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTagKey()
+    {
+        return self::CACHE_TAG;
+    }
+
+    /**
+     * @param Varien_Data_Form_Element_Abstract $element
+     *
+     * @return string
+     * @throws Zend_Cache_Exception
+     */
     protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
         $apiKey = trim(Mage::getStoreConfig('tax/taxjar/apikey'));
@@ -32,11 +57,5 @@ class Taxjar_SalesTax_Block_Adminhtml_Enabled extends Mage_Adminhtml_Block_Syste
         }
 
         return parent::_getElementHtml($element);
-    }
-
-    protected function _cacheElementValue(Varien_Data_Form_Element_Abstract $element)
-    {
-        $elementValue = (string) $element->getValue();
-        Mage::app()->getCache()->save($elementValue, 'taxjar_salestax_config_enabled', array('TAXJAR_SALESTAX_ENABLED'), null);
     }
 }
