@@ -17,6 +17,8 @@
 
 class Taxjar_SalesTax_Model_Observer_ImportData
 {
+    use Taxjar_SalesTax_Trait_ConfigScope;
+
     protected $_apiKey;
     protected $_client;
 
@@ -29,7 +31,8 @@ class Taxjar_SalesTax_Model_Observer_ImportData
                 ->load($this->_client->getStoreRegionId());
             $storeRegionCode = $storeRegion->getCode();
 
-            if (isset($storeRegionCode) && $storeRegion->getCountryId() === 'US') {
+            $enabled = $this->getConfigValue('tax/taxjar/enabled');
+            if ($enabled && isset($storeRegionCode) && $storeRegion->getCountryId() === 'US') {
                 $this->_setConfiguration();
             }
         }
