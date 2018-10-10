@@ -25,6 +25,7 @@ class Taxjar_SalesTax_Model_Configuration
 
     const DISPLAY_TAX_EXCLUSIVE = 1;
     const DISPLAY_TAX_INCLUSIVE = 2;
+    const SHIPPING_TAX_CLASS = 4;
 
     /**
      * Sets shipping taxability in Magento
@@ -37,10 +38,15 @@ class Taxjar_SalesTax_Model_Configuration
         $taxClass = 0;
 
         if ($configJson['freight_taxable']) {
-            $taxClass = 4;
+            $taxClass = self::SHIPPING_TAX_CLASS;
         }
 
-        $this->_setConfig('tax/classes/shipping_tax_class', $taxClass);
+        $this->_setConfig(
+            'tax/classes/shipping_tax_class',
+            $taxClass,
+            $this->getScope(),
+            $this->getScopeId()
+        );
     }
 
     /**
