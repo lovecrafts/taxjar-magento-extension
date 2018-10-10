@@ -149,7 +149,7 @@ class Taxjar_SalesTax_Model_Observer_ImportRates
     {
         $rule = Mage::getModel('taxjar/import_rule');
         $productTaxClasses = $this->_productTaxClasses;
-        $shippingClass = Mage::getStoreConfig('tax/classes/shipping_tax_class');
+        $shippingClass = $this->getConfigValue('tax/classes/shipping_tax_class');
         $backupShipping = in_array($shippingClass, $productTaxClasses);
 
         if ($backupShipping) {
