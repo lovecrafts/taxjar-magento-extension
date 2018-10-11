@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.4.0] - 2018-10-11
+- Add calculation logging when debug mode is enabled.
+- Improve backup rate sync performance up to 25%.
+- Fix calculations for bundle product quantities caused by regression in 2.3.7.
+
 ## [2.3.7] - 2018-07-02
 - Fix discounts applied to shipping amounts for calculations.
 - Fix calculations on newly added cart items if redirect to cart after adding a product is turned off.
@@ -80,7 +85,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - New AJAX sync button for manually refreshing backup rates from TaxJar.
 - Admin notifications tied to our RSS feed for extension updates and news.
 
-[Unreleased]: https://github.com/taxjar/taxjar-magento-extension/compare/v2.3.7...HEAD
+[Unreleased]: https://github.com/taxjar/taxjar-magento-extension/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/taxjar/taxjar-magento-extension/compare/v2.3.7...v2.4.0
 [2.3.7]: https://github.com/taxjar/taxjar-magento-extension/compare/v2.3.6...v2.3.7
 [2.3.6]: https://github.com/taxjar/taxjar-magento-extension/compare/v2.3.5...v2.3.6
 [2.3.5]: https://github.com/taxjar/taxjar-magento-extension/compare/v2.3.4...v2.3.5

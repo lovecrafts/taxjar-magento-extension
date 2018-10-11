@@ -1,5 +1,5 @@
 <_>
-   <form_key>Lts3qeK31YlBPk8d</form_key>
+   <form_key>9CBoa63YesFNdKtZ</form_key>
    <name>Taxjar_Salestaxautomation</name>
    <channel>community</channel>
    <version_ids>
@@ -9,12 +9,11 @@
    <description>TaxJar for Magento allows you to quickly calculate sales tax at checkout using our SmartCalcs API and zip-based rates as a backup.</description>
    <license>OSL-3.0</license>
    <license_uri/>
-   <version>2.3.7</version>
+   <version>2.4.0</version>
    <stability>stable</stability>
-   <notes>* Fix discounts applied to shipping amounts for calculations.
-* Fix calculations on newly added cart items if redirect to cart after adding a product is turned off.
-* Fix zip validation for backup rates.
-* Fix PHP 7 type error when running scheduled backup rate sync.</notes>
+   <notes>* Add calculation logging when debug mode is enabled.
+* Improve backup rate sync performance up to 25%.
+* Fix calculations for bundle product quantities caused by regression in 2.3.7.</notes>
    <authors>
       <name>
          <name>TaxJar</name>
