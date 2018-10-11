@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-    <name>Taxjar_Salestaxautomation</name>
+    <name>taxjar_salestaxautomation</name>
     <version>2.4.0</version>
     <stability>stable</stability>
     <license>OSL-3.0</license>
