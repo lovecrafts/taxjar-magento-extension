@@ -36,13 +36,13 @@ class Taxjar_SalesTax_Model_Import_Rule
     {
         $rule = Mage::getModel('tax/calculation_rule')->load($code, 'code');
 
-        $attributes = [
+        $attributes = array(
             'code' => $code,
             'tax_customer_class' => $customerClasses,
             'tax_product_class' => $productClasses,
             'position' => $position,
             'priority' => 1
-        ];
+        );
 
         if ($rule && $rule->getId()) {
             $attributes['tax_rate'] = array_merge($rule->getRates(), $rates);
