@@ -101,8 +101,8 @@ class Taxjar_SalesTax_Model_Transaction
      */
     protected function buildLineItems($order, $items, $type = 'order') {
         $lineItems = array();
-        $parentDiscounts = $this->getParentAmounts('discount', $items);
-        $parentTaxes = $this->getParentAmounts('tax', $items);
+        $parentDiscounts = $this->getParentAmounts('discount', $items, $type);
+        $parentTaxes = $this->getParentAmounts('tax', $items, $type);
 
         foreach ($items as $item) {
             if ($item->getParentItemId()) {
@@ -145,8 +145,10 @@ class Taxjar_SalesTax_Model_Transaction
                 'sales_tax' => $tax
             );
 
-            if ($type == 'refund') {
-                $lineItem['quantity'] = (int) $item->getQty();
+            if ($type == 'refund' && method_exists($item, 'getOrderItem')) {
+                $orderItem = $item->getOrderItem();
+                $lineItem['quantity'] = (int) $orderItem->getQtyRefunded();
+                $lineItem['unit_price'] = $orderItem->getAmountRefunded() / $lineItem['quantity'];
             }
 
             $lineItems['line_items'][] = $lineItem;
@@ -158,11 +160,12 @@ class Taxjar_SalesTax_Model_Transaction
     /**
      * Get parent amounts (discounts, tax, etc) for bundle products
      *
-     * @param string $type
+     * @param string $attr
      * @param array $items
+     * @param string $type
      * @return array
      */
-    protected function getParentAmounts($type, $items) {
+    protected function getParentAmounts($attr, $items, $type = 'order') {
         $parentAmounts = array();
 
         foreach ($items as $item) {
@@ -177,12 +180,12 @@ class Taxjar_SalesTax_Model_Transaction
             }
 
             if ($parentItemId) {
-                switch ($type) {
+                switch ($attr) {
                     case 'discount':
-                        $amount = (float) $item->getDiscountAmount();
+                        $amount = (float) (($type == 'order') ? $item->getDiscountAmount() : $item->getDiscountRefunded());
                         break;
                     case 'tax':
-                        $amount = (float) $item->getTaxAmount();
+                        $amount = (float) (($type == 'order') ? $item->getTaxAmount() : $item->getTaxRefunded());
                         break;
                 }
 
