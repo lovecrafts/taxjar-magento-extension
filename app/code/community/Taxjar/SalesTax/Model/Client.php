@@ -167,7 +167,15 @@ class Taxjar_SalesTax_Model_Client
                 $json = $response->getBody();
                 return json_decode($json, true);
             } else {
-                $this->_handleError($errors, $response->getStatus());
+                $detail = null;
+                if ($response->getBody()) {
+                    $detail = json_decode($response->getBody(), true);
+                    if (isset($detail['detail'])) {
+                        $detail = $detail['detail'];
+                    }
+                }
+
+                $this->_handleError($errors, $response->getStatus(), $detail);
             }
         } catch (Zend_Http_Client_Exception $e) {
             Mage::throwException(Mage::helper('taxjar')->__('Could not connect to TaxJar.'));
@@ -213,16 +221,17 @@ class Taxjar_SalesTax_Model_Client
      *
      * @param array $customErrors
      * @param string $statusCode
+     * @param string $detail
      * @return string
      */
-    private function _handleError($customErrors, $statusCode)
+    private function _handleError($customErrors, $statusCode, $detail = null)
     {
         $errors = $this->_defaultErrors() + $customErrors;
 
         if (isset($errors[$statusCode])) {
-            Mage::throwException($errors[$statusCode]);
+            Mage::throwException($errors[$statusCode] . ' ' . $detail);
         } else {
-            Mage::throwException($errors['default']);
+            Mage::throwException($errors['default'] . ' ' . $detail);
         }
     }
 

@@ -15,21 +15,30 @@
  * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  */
 
-class Taxjar_SalesTax_Model_Observer_AdminNotifications extends Mage_AdminNotification_Model_Feed
+class Taxjar_SalesTax_Model_Export_Cron extends Taxjar_SalesTax_Model_Export_Abstract
 {
-    public function getFeedUrl()
+    /**
+     * @return string
+     */
+    public function getFilterBy()
     {
-        if (is_null($this->_feedUrl)) {
-            $this->_feedUrl = (Mage::getStoreConfigFlag(self::XML_USE_HTTPS_PATH) ? 'https://' : 'http://')
-                . 'www.taxjar.com/magento/feed.xml';
-        }
-        return $this->_feedUrl;
+        return 'updated_at';
     }
 
-    public function execute()
+    /**
+     * @return false|string
+     */
+    public function getFromDate()
     {
-        if (Mage::getSingleton('admin/session')->isLoggedIn()) {
-            $this->checkUpdate();
-        }
+        $from = Mage::getStoreConfig('tax/taxjar/cron_orders_export_for_time') ?: 1440;
+        return date($this->getFormat(), time() - $from * 60);
+    }
+
+    /**
+     * @return false|string
+     */
+    public function getToDate()
+    {
+        return date($this->getFormat(), time());
     }
 }

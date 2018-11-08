@@ -119,14 +119,39 @@
                             <show_in_store>1</show_in_store>
                             <depends><connected>1</connected></depends>
                         </debug>
+                        <cron_orders_export_from translate="label">
+                            <label>Export Orders From</label>
+                            <comment>Cron job will export complete or closed orders which were changed within minutes specified in this field.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <connected>1</connected>
+                            </depends>
+                        </cron_orders_export_from>
+                        <replace_postcode_for_test_env translate="label">
+                            <label>Replace PostCode For Testing Purposes?</label>
+                            <comment>
+                                TaxJar API refuses orders or refunds if their postcode doesn't belong to its address state.
+                                We need to use valid postcodes in testing environments to overcome export issues due to sanitized order's data.
+                            </comment>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>13</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </replace_postcode_for_test_env>
                         <apikey translate="label">
                             <label>API Token</label>
                             <comment>Your TaxJar API token for sales tax calculations and backup rates.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>12</sort_order>
+                            <sort_order>14</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>11</show_in_store>
+                            <show_in_store>1</show_in_store>
                             <depends>
                                 <connected>1</connected>
                                 <debug>1</debug>

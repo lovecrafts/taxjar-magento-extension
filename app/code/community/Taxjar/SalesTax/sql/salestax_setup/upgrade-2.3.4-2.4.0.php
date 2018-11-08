@@ -18,24 +18,54 @@
 $installer = $this;
 $installer->startSetup();
 
-try {
-    $installer->getConnection()
-        ->addColumn($installer->getTable('sales/order'), 'tj_salestax_sync_date', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
-            'nullable' => true,
-            'after' => null,
-            'comment' => 'Order sync date for TaxJar'
-        ));
+// orders
+$installer->getConnection()->dropTable($installer->getTable('taxjar/order_synced'));
+$ordersTable = $installer->getConnection()
+    ->newTable($installer->getTable('taxjar/order_synced'))
+    ->addColumn(
+        'id',
+        Varien_Db_Ddl_Table::TYPE_INTEGER,
+        null,
+        array(
+            'unsigned' => true,
+            'nullable' => false,
+            'primary'  => true,
+        ),
+        'Order Id'
+    )
+    ->addColumn(
+        'synced_at',
+        Varien_Db_Ddl_Table::TYPE_DATETIME,
+        null,
+        array('nullable' => false),
+        'Last syncroniation time'
+    )
+    ->setComment('Orders syncroniation time with TaxJar API');
+$installer->getConnection()->createTable($ordersTable);
 
-    $installer->getConnection()
-        ->addColumn($installer->getTable('sales/creditmemo'), 'tj_salestax_sync_date', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
-            'nullable' => true,
-            'after' => null,
-            'comment' => 'Refund sync date for TaxJar'
-        ));
-} catch (Exception $e) {
-    Mage::logException($e);
-}
+// creditmemos
+$installer->getConnection()->dropTable($installer->getTable('taxjar/creditmemo_synced'));
+$creditMemosTable = $installer->getConnection()
+    ->newTable($installer->getTable('taxjar/creditmemo_synced'))
+    ->addColumn(
+        'id',
+        Varien_Db_Ddl_Table::TYPE_INTEGER,
+        null,
+        array(
+            'unsigned' => true,
+            'nullable' => false,
+            'primary'  => true,
+        ),
+        'Order Id'
+    )
+    ->addColumn(
+        'synced_at',
+        Varien_Db_Ddl_Table::TYPE_DATETIME,
+        null,
+        array('nullable' => false),
+        'Last syncroniation time'
+    )
+    ->setComment('Creditmemos syncroniation time with TaxJar API');
+$installer->getConnection()->createTable($creditMemosTable);
 
 $installer->endSetup();

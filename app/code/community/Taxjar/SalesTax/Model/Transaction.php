@@ -24,13 +24,62 @@ class Taxjar_SalesTax_Model_Transaction
     protected $client;
     protected $logger;
 
+    /** @var Varien_Db_Adapter_Interface */
+    protected $readConnection;
+    /** @var Varien_Db_Adapter_Interface */
+    protected $writeConnection;
+
     public function __construct()
     {
         $this->client = Mage::getSingleton('taxjar/client');
         $this->logger = Mage::getSingleton('taxjar/logger')->setFilename('transactions.log');
+        $this->logger = Mage::getSingleton('taxjar/logger');
+        $this->readConnection = Mage::getSingleton('core/resource')->getConnection(
+            Mage_Core_Model_Resource::DEFAULT_READ_RESOURCE
+        );
+        $this->writeConnection = Mage::getSingleton('core/resource')->getConnection(
+            Mage_Core_Model_Resource::DEFAULT_WRITE_RESOURCE
+        );
     }
 
     /**
+     * @param string $entityId
+     * @param string $tableName
+     *
+     * @return PDO_Statement|Zend_Db_Statement
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function getSyncedAt($entityId, $tableName)
+    {
+        $select = $this->readConnection
+            ->select()
+            ->from($tableName, array('synced_at'))
+            ->where('id = ?', $entityId);
+
+        return $this->readConnection
+            ->query($select)
+            ->fetchColumn();
+    }
+
+    /**
+     * @param string $entityId
+     * @param string $tableName
+     */
+    public function setSyncedAt($entityId, $tableName)
+    {
+        $this->writeConnection->insertOnDuplicate(
+            $tableName,
+            array(
+                'id'        => $entityId,
+                'synced_at' => date('Y-m-d H:i:s', time())
+            ),
+            array('synced_at')
+        );
+    }
+
+    /**
+     * @deprecated
+     *
      * Check if a transaction is synced
      *
      * @param string $syncDate
@@ -73,19 +122,27 @@ class Taxjar_SalesTax_Model_Transaction
      * @param $order
      * @return array
      */
-    protected function buildToAddress($order) {
-        if ($order->getIsVirtual()) {
-            $address = $order->getBillingAddress();
-        } else {
-            $address = $order->getShippingAddress();
-        }
+    protected function buildToAddress($order)
+    {
+        /**
+         * don't load address object as it's data is already present in the order
+         * @see Taxjar_SalesTax_Model_Export_Abstract::execute
+         */
+        $address = Mage::getModel(
+            'sales/order_address',
+            array(
+                'country_id' => $order->getCountryId(),
+                'region'     => $order->getRegion(),
+                'region_id'  => $order->getRegionId()
+            )
+        );
 
         $toAddress = array(
-            'to_country' => $address->getCountryId(),
-            'to_zip' => $address->getPostcode(),
-            'to_state' => $address->getRegionCode(),
-            'to_city' => $address->getCity(),
-            'to_street' => $address->getData('street')
+            'to_country' => $order->getCountryId(),
+            'to_zip'     => $order->getPostcode(),
+            'to_state'   => $address->getRegionCode(),
+            'to_city'    => $order->getCity(),
+            'to_street'  => $order->getStreet()
         );
 
         return $toAddress;
@@ -99,7 +156,8 @@ class Taxjar_SalesTax_Model_Transaction
      * @param string $type
      * @return array
      */
-    protected function buildLineItems($order, $items, $type = 'order') {
+    protected function buildLineItems($order, $items, $type = 'order')
+    {
         $lineItems = array();
         $parentDiscounts = $this->getParentAmounts('discount', $items, $type);
         $parentTaxes = $this->getParentAmounts('tax', $items, $type);
@@ -113,11 +171,17 @@ class Taxjar_SalesTax_Model_Transaction
                 continue;
             }
 
+            // don't load whole product object just to select one tax class attribute,
+            // using single select instead
+            $productTaxClassId = Mage::getResourceSingleton('catalog/product')->getAttributeRawValue(
+                $item->getProductId(),
+                'tax_class_id',
+                $order->getStoreId()
+            );
+
             $itemId = $item->getOrderItemId() ? $item->getOrderItemId() : $item->getItemId();
-            $product = Mage::getModel('catalog/product')->load($item->getProductId());
             $discount = (float) $item->getDiscountAmount();
             $tax = (float) $item->getTaxAmount();
-            $taxCode = '';
 
             if (isset($parentDiscounts[$itemId]) && $parentDiscounts[$itemId] > 0) {
                 $discount = $parentDiscounts[$itemId] ?: $discount;
@@ -127,8 +191,8 @@ class Taxjar_SalesTax_Model_Transaction
                 $tax = $parentTaxes[$itemId] ?: $tax;
             }
 
-            if ($product->getTaxClassId()) {
-                $taxClass = Mage::getModel('tax/class')->load($product->getTaxClassId());
+            if ($productTaxClassId) {
+                $taxClass = Mage::getModel('tax/class')->load($productTaxClassId);
                 $taxCode = $taxClass->getTjSalestaxCode();
             } else {
                 $taxCode = '99999';
@@ -165,7 +229,8 @@ class Taxjar_SalesTax_Model_Transaction
      * @param string $type
      * @return array
      */
-    protected function getParentAmounts($attr, $items, $type = 'order') {
+    protected function getParentAmounts($attr, $items, $type = 'order')
+    {
         $parentAmounts = array();
 
         foreach ($items as $item) {

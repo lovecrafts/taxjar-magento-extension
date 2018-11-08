@@ -23,6 +23,7 @@ class Taxjar_SalesTax_Model_Transaction_Order extends Taxjar_SalesTax_Model_Tran
 {
     protected $originalOrder;
     protected $request;
+    protected $tableName = 'taxjar_order_synced';
 
     /**
      * Build an order transaction
@@ -67,9 +68,9 @@ class Taxjar_SalesTax_Model_Transaction_Order extends Taxjar_SalesTax_Model_Tran
      */
     public function push($forceMethod = null) {
         $orderUpdatedAt = $this->originalOrder->getUpdatedAt();
-        $orderSyncedAt = $this->originalOrder->getTjSalestaxSyncDate();
+        $orderSyncedAt = $this->getSyncedAt($this->originalOrder->getId(), $this->tableName);
 
-        if (!$this->isSynced($orderSyncedAt)) {
+        if (!$orderSyncedAt) {
             $method = 'POST';
         } else {
             if ($orderSyncedAt < $orderUpdatedAt) {
@@ -90,13 +91,12 @@ class Taxjar_SalesTax_Model_Transaction_Order extends Taxjar_SalesTax_Model_Tran
             if ($method == 'POST') {
                 $response = $this->client->postResource('orders', $this->request, $this->transactionErrors());
                 $this->logger->log('Order #' . $this->request['transaction_id'] . ' created in TaxJar: ' . json_encode($response), 'api');
-                $this->originalOrder->addStatusHistoryComment('Order created in TaxJar with $' . $this->request['sales_tax'] . ' sales tax collected.')->save();
             } else {
                 $response = $this->client->putResource('orders', $this->request['transaction_id'], $this->request, $this->transactionErrors());
                 $this->logger->log('Order #' . $this->request['transaction_id'] . ' updated in TaxJar: ' . json_encode($response), 'api');
             }
 
-            $this->originalOrder->setTjSalestaxSyncDate(gmdate('Y-m-d H:i:s'))->save();
+            $this->setSyncedAt($this->originalOrder->getId(), $this->tableName);
         } catch (Exception $e) {
             $this->logger->log('Error: ' . $e->getMessage(), 'error');
 
@@ -117,6 +117,8 @@ class Taxjar_SalesTax_Model_Transaction_Order extends Taxjar_SalesTax_Model_Tran
     }
 
     /**
+     * @deprecated
+     *
      * Determines if an order can be synced
      *
      * @param $order

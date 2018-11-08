@@ -50,6 +50,12 @@
                     <tax_nexus>
                         <table>tax_nexus</table>
                     </tax_nexus>
+                    <order_synced>
+                        <table>taxjar_order_synced</table>
+                    </order_synced>
+                    <creditmemo_synced>
+                        <table>taxjar_creditmemo_synced</table>
+                    </creditmemo_synced>
                 </entities>
             </taxjar_resource>
             <sales>
@@ -71,24 +77,6 @@
             </salestax_setup>
         </resources>
         <events>
-            <sales_order_save_after>
-                <observers>
-                    <taxjar>
-                        <type>singleton</type>
-                        <class>taxjar/observer_syncTransaction</class>
-                        <method>execute</method>
-                    </taxjar>
-                </observers>
-            </sales_order_save_after>
-            <taxjar_salestax_backfill_transactions>
-                <observers>
-                    <taxjar>
-                        <type>singleton</type>
-                        <class>taxjar/observer_backfillTransactions</class>
-                        <method>execute</method>
-                    </taxjar>
-                </observers>
-            </taxjar_salestax_backfill_transactions>
             <taxjar_salestax_import_categories>
                 <observers>
                     <taxjar>
@@ -116,15 +104,6 @@
                     </taxjar>
                 </observers>
             </taxjar_salestax_import_rates>
-            <sales_order_save_after>
-                <observers>
-                    <taxjar>
-                        <type>singleton</type>
-                        <class>taxjar/observer_syncTransaction</class>
-                        <method>execute</method>
-                    </taxjar>
-                </observers>
-            </sales_order_save_after>
             <sales_quote_collect_totals_before>
                 <observers>
                     <taxjar>
@@ -178,7 +157,7 @@
                 <observers>
                     <taxjar>
                         <type>singleton</type>
-                        <class>taxjar/observer_backfillTransactions</class>
+                        <class>taxjar/export_Admin</class>
                         <method>execute</method>
                     </taxjar>
                 </observers>
@@ -213,6 +192,8 @@
             <taxjar>
                 <product_tax_classes>2</product_tax_classes>
                 <customer_tax_classes>3</customer_tax_classes>
+                <cron_orders_export_from>1440</cron_orders_export_from>
+                <replace_postcode_for_test_env>0</replace_postcode_for_test_env>
             </taxjar>
         </tax>
     </default>

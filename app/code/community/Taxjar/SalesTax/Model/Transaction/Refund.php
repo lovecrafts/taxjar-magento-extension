@@ -21,7 +21,9 @@
  */
 class Taxjar_SalesTax_Model_Transaction_Refund extends Taxjar_SalesTax_Model_Transaction
 {
-   /**
+    protected $tableName = 'taxjar_creditmemo_synced';
+
+    /**
      * Build a refund transaction
      *
      * @param $order
@@ -75,9 +77,9 @@ class Taxjar_SalesTax_Model_Transaction_Refund extends Taxjar_SalesTax_Model_Tra
      */
     public function push($forceMethod = null) {
         $refundUpdatedAt = $this->originalRefund->getUpdatedAt();
-        $refundSyncedAt = $this->originalRefund->getTjSalestaxSyncDate();
+        $refundSyncedAt = $this->getSyncedAt($this->originalRefund->getId(), $this->tableName);
 
-        if (!$this->isSynced($refundSyncedAt)) {
+        if (!$refundSyncedAt) {
             $method = 'POST';
         } else {
             if ($refundSyncedAt < $refundUpdatedAt) {
@@ -102,14 +104,12 @@ class Taxjar_SalesTax_Model_Transaction_Refund extends Taxjar_SalesTax_Model_Tra
             if ($method == 'POST') {
                 $response = $this->client->postResource('refunds', $this->request, $this->transactionErrors());
                 $this->logger->log('Refund #' . $this->request['transaction_id'] . ' created: ' . json_encode($response), 'api');
-                $this->originalRefund->addComment('Refund / credit memo created in TaxJar.')->save();
-                $this->originalOrder->addStatusHistoryComment('Refund / credit memo created in TaxJar.')->save();
             } else {
                 $response = $this->client->putResource('refunds', $this->request['transaction_id'], $this->request, $this->transactionErrors());
                 $this->logger->log('Refund #' . $this->request['transaction_id'] . ' updated: ' . json_encode($response), 'api');
             }
 
-            $this->originalRefund->setTjSalestaxSyncDate(gmdate('Y-m-d H:i:s'))->save();
+            $this->setSyncedAt($this->originalRefund->getId(), $this->tableName);
         } catch (Exception $e) {
             $this->logger->log('Error: ' . $e->getMessage(), 'error');
 
