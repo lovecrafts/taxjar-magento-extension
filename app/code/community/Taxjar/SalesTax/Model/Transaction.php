@@ -33,7 +33,6 @@ class Taxjar_SalesTax_Model_Transaction
     {
         $this->client = Mage::getSingleton('taxjar/client');
         $this->logger = Mage::getSingleton('taxjar/logger')->setFilename('transactions.log');
-        $this->logger = Mage::getSingleton('taxjar/logger');
         $this->readConnection = Mage::getSingleton('core/resource')->getConnection(
             Mage_Core_Model_Resource::DEFAULT_READ_RESOURCE
         );

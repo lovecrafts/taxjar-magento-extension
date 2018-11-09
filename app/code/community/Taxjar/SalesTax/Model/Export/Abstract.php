@@ -28,7 +28,7 @@ abstract class Taxjar_SalesTax_Model_Export_Abstract
 
     public function __construct()
     {
-        $this->logger = Mage::getSingleton('taxjar/logger');
+        $this->logger = Mage::getSingleton('taxjar/logger')->setFilename('transactions.log');
     }
 
     /**

@@ -193,7 +193,6 @@
                 <product_tax_classes>2</product_tax_classes>
                 <customer_tax_classes>3</customer_tax_classes>
                 <cron_orders_export_from>1440</cron_orders_export_from>
-                <replace_postcode_for_test_env>0</replace_postcode_for_test_env>
             </taxjar>
         </tax>
     </default>
