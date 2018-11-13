@@ -90,9 +90,6 @@ abstract class Taxjar_SalesTax_Model_Export_Abstract
             $toDate->format('m/d/Y')
         );
 
-        $fromDate->setTime(0, 0, 0);
-        $toDate->setTime(23, 59, 59);
-
         $orders = Mage::getModel('sales/order')->getCollection()
             ->addAttributeToFilter('state', array('in' => $statesToMatch))
             ->addAttributeToFilter('order_currency_code', array('eq' => self::DEFAULT_CURRENCY_CODE))
