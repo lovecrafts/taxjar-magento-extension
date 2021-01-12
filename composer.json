@@ -10,6 +10,6 @@
         "homepage": "http://www.taxjar.com"
     }],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
+        "magento/magento-composer-installer": "0.2.0"
     }
 }
